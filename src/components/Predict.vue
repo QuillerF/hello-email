@@ -100,9 +100,10 @@
         <el-form-item label="自测完成时间" required>
           <div class="line-item">
             <el-date-picker
-              type="datetime"
-              default-time="18:30:00"
-              placeholder="选择日期"
+              type="datetimerange"
+              :default-time="['09:30:00', '18:30:00']"
+              start-placeholde="开始日期"
+              end-placeholde="结束日期"
               v-model="ruleForm.testDate"
               style="width: 100%"
             ></el-date-picker>
@@ -167,25 +168,18 @@ today is colored in #AAF
 技术文档:
 {{ ruleForm.devUrl }}
 
-估时文档<span v-for="(item,index) in ruleForm.predicts" :key="index">
+估时文档:<span v-for="(item,index) in ruleForm.predicts" :key="index">
 {{item.name }} {{item.time}}h
 {{item.url}}
 </span>
 
-开发开始时间
-{{ ruleForm.devDateRange[0] | formatTime }}
+开发时间: {{ ruleForm.devDateRange[0] | formatTime }} - {{ ruleForm.devDateRange[1] | formatTime }}
 
-开发结束时间
-{{ ruleForm.devDateRange[1] | formatTime }}
+预计协作方等待时间: {{ruleForm.waitDate}}PD
 
-预计协作方等待时间
-{{ruleForm.waitDate}}PD
+联调自测: {{ ruleForm.testDate[0] | formatTime }} - {{ ruleForm.testDate[1] | formatTime }}
 
-联调自测完成时间
-{{ ruleForm.testDate | formatTime }}
-
-提测时间
-{{ ruleForm.deliveryDate | formatTime }}</pre>
+预计提测: {{ ruleForm.deliveryDate | formatTime }}</pre>
     </div>
   </div>
 </template>
@@ -198,7 +192,6 @@ export default {
     return {
       ruleForm: {
         name: "",
-        productUrl: "",
         devUrl: "",
         predicts: [
           {
@@ -208,53 +201,21 @@ export default {
             items: "",
           },
         ],
-        devDateRange: ["2020-9--7", "2020-9-7"],
-        testDate: "",
+        devDateRange: ["2020-9-7", "2020-9-7"],
+        testDate: ["2020-9-7", "2020-9-7"],
         waitDate: "",
         deliveryDate: "",
       },
       message: "asdasdasd",
-      textarea: "",
       rules: {
-        name: [
-          { required: true, message: "请输入活动名称", trigger: "blur" },
-          { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" },
-        ],
-        region: [
-          { required: true, message: "请选择活动区域", trigger: "change" },
-        ],
-        date1: [
-          {
-            type: "date",
-            required: true,
-            message: "请选择日期",
-            trigger: "change",
-          },
-        ],
-        type: [
-          {
-            type: "array",
-            required: true,
-            message: "请至少选择一个活动性质",
-            trigger: "change",
-          },
-        ],
-        resource: [
-          { required: true, message: "请选择活动资源", trigger: "change" },
-        ],
-        desc: [{ required: true, message: "请填写活动形式", trigger: "blur" }],
+        name: [{ required: true, message: "请输入名称", trigger: "blur" }],
       },
     };
   },
   created() {
     console.log(this.$refs.pre);
   },
-  computed: {
-    getInnerHtml() {
-      if (!this.$refs.pre) return "";
-      return this.$refs.pre.innerText;
-    },
-  },
+  computed: {},
   methods: {
     addPredictItem() {
       this.ruleForm.predicts.push({

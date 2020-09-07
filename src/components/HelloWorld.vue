@@ -2,10 +2,21 @@
   <div class="hello">
     <el-container>
       <el-header>
-        <h3>邮件模板器</h3>
+        <h3>邮件模板</h3>
       </el-header>
       <el-container class="container" direction="horizontal">
-        <el-aside width="200px">估时邮件</el-aside>
+        <el-aside width="200px">
+          <el-menu  default-active="1" background-color="#465d4c" text-color="#ffffff" class="el-menu-vertical-demo">
+            <el-menu-item index="1">
+              <i class="el-icon-menu"></i>
+              <span slot="title">估时模板</span>
+            </el-menu-item>
+            <el-menu-item index="2">
+              <i class="el-icon-document"></i>
+              <span slot="title">提测模板</span>
+            </el-menu-item>
+          </el-menu></el-aside
+        >
         <el-main>
           <Predict></Predict>
         </el-main>
