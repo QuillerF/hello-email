@@ -9,61 +9,24 @@
         label-width="180px"
         class="demo-ruleForm"
       >
-        <el-form-item label="产品文档" prop="name">
-          <div class="line-item">
-            <el-input v-model="ruleForm.name" placeholder="项目名称"></el-input>
-            <!-- <el-input
-              v-model="ruleForm.productUrl"
-              placeholder="项目产品文档链接"
-            ></el-input> -->
-          </div>
-        </el-form-item>
-        <el-form-item label="技术文档" prop="devUrl">
-          <div class="line-item">
-            <el-input
-              v-model="ruleForm.devUrl"
-              placeholder="技术文档链接"
-            ></el-input>
-          </div>
-        </el-form-item>
-        <el-form-item label="估时文档" prop="predicts">
-          <div class="btn-item">
-            <div>
-              <div
-                v-for="(item, index) in ruleForm.predicts"
-                :key="index"
-                class="input-area"
-                style="margin-bottom: 10px"
-              >
-                <div class="three-item">
-                  <el-input
-                    v-model="item.name"
-                    placeholder="开发人姓名"
-                  ></el-input>
-                  <el-input
-                    v-model="item.time"
-                    placeholder="估时(h)"
-                  ></el-input>
-                  <el-input
-                    v-model="item.url"
-                    placeholder="估时文档链接"
-                  ></el-input>
-                  <div class="btn-area center">
-                    <el-button
-                      type="danger"
-                      circle
-                      icon="el-icon-minus"
-                      @click="delPredictItem(index)"
-                    ></el-button>
-                  </div>
-                  <div class="task">
-                    <el-input
-                      v-model="item.items"
-                      type="textarea"
-                      :rows="2"
-                      placeholder="请输入分解任务,多个任务以逗号分隔"
-                    ></el-input>
-                  </div>
+        <el-form-item label="产品文档" prop="predicts">
+          <div>
+            <div
+              v-for="(item, index) in ruleForm.predicts"
+              :key="index"
+              class="input-area"
+              style="margin-bottom: 10px"
+            >
+              <div class="three-item">
+                <el-input v-model="item.name" placeholder="文档名称"></el-input>
+                <el-input v-model="item.url" placeholder="文档链接"></el-input>
+                <div class="btn-area center">
+                  <el-button
+                    type="danger"
+                    circle
+                    icon="el-icon-minus"
+                    @click="delPredictItem(index)"
+                  ></el-button>
                 </div>
               </div>
             </div>
@@ -75,41 +38,6 @@
               @click="addPredictItem"
               >添加</el-button
             >
-          </div>
-        </el-form-item>
-        <el-form-item label="开发时间">
-          <div class="line-item">
-            <el-date-picker
-              type="datetimerange"
-              :default-time="['09:30:00', '18:30:00']"
-              :picker-options="pickOptions"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              unlink-panels
-              v-model="ruleForm.devDateRange"
-              style="width: 100%"
-            ></el-date-picker>
-          </div>
-        </el-form-item>
-        <el-form-item label="等待时间">
-          <div class="line-item">
-            <el-input
-              v-model="ruleForm.waitDate"
-              placeholder="请输入预计协作方等待时间(PD)"
-            ></el-input>
-          </div>
-        </el-form-item>
-        <el-form-item label="自测时间">
-          <div class="line-item">
-            <el-date-picker
-              type="datetimerange"
-              :picker-options="pickOptions"
-              :default-time="['09:30:00', '18:30:00']"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              v-model="ruleForm.testDate"
-              style="width: 100%"
-            ></el-date-picker>
           </div>
         </el-form-item>
         <el-form-item label="提测时间">
@@ -132,7 +60,7 @@
             v-clipboard:error="onError"
             >复制代码</el-button
           > -->
-          <el-button type="primary" @click="doCopy">复制showDoc代码</el-button>
+          <el-button type="primary" @click="doCopy">复制代码</el-button>
           <el-button @click="resetForm">重置</el-button>
         </el-form-item>
       </el-form>
@@ -140,50 +68,24 @@
     <div class="area">
       <div class="area-title">内容预览区</div>
       <pre ref="pre">
-```plantuml
-@startmindmap
-title {{ ruleForm.name }}
-+ {{ ruleForm.name }}<span v-for="(item) in ruleForm.predicts" :key="item.id">
-++ {{item.name}}<span v-for="el in toArray(item.items)" :key="el" >
-+++ {{el}}</span>
-</span>
-@endmindmap
-```
+## PC端提测时间：2020-09-01 14:30
 
-```plantuml
-@startgantt
-title {{ ruleForm.name }}
-sunday are closed
-project starts the {{ ruleForm.devDateRange&&ruleForm.devDateRange[0] | formatDate }}
-scale 3
--- 进入开发 --
-[开发]  starts {{ ruleForm.devDateRange&&ruleForm.devDateRange[0] | formatDate }} and ends {{ ruleForm.devDateRange&&ruleForm.devDateRange[1] | formatDate }} and is 0% complete
-[联调自测]   starts {{ ruleForm.testDate&&ruleForm.testDate[0] | formatDate }} and ends {{ ruleForm.testDate&&ruleForm.testDate[1] | formatDate }} and is 0% complete
-[开发]->[联调自测]
-[提测] happens {{ ruleForm.deliveryDate | formatDate }}
--- 提测 --
-[提测]->[测试]
-[测试] starts {{ ruleForm.deliveryDate | formatDate }}
-[测试] lasts 2 days and is 0% complete
-today is colored in #AAF
-@endgantt
-```
+### 1. 此次开发功能：
 
-技术文档:
-{{ ruleForm.devUrl }}
+##### 240 我的课程-PC   http://showdoc.sishuxuefu.com:38020/web/#/26?page_id=3233
 
-估时文档:<span v-for="(item,index) in ruleForm.predicts" :key="index">
-{{item.name }} {{item.time}}h
-{{item.url}}
-</span>
+### 2. 自测进度
 
-开发时间: {{ ruleForm.devDateRange&&ruleForm.devDateRange[0] | formatTime }} - {{ ruleForm.devDateRange&&ruleForm.devDateRange[1] | formatTime }}
+| 自测计划 | 全部用例 | P0用例 | P1用例 | P2用例 | P3用例 |
+| :------: | :------: | :----: | ------ | ------ | ------ |
+| 我的课程 |  92/92   |  3/3   | 32/32  | 47/47  | 10/10  |
 
-预计协作方等待时间: {{ruleForm.waitDate}}PD
+备注:部分用例测试失败原因是用例写的情形为移动端
 
-联调自测: {{ ruleForm.testDate&&ruleForm.testDate[0] | formatTime }} - {{ ruleForm.testDate&&ruleForm.testDate[1] | formatTime }}
+### 3. 测试环境
 
-预计提测: {{ ruleForm.deliveryDate | formatTime }}</pre>
+##### 后端环境：http://sigmabeta.sishuxuefu.com:8020/</pre
+      >
     </div>
   </div>
 </template>
@@ -406,7 +308,7 @@ $border: #d7bca4;
     }
     .three-item {
       display: grid;
-      grid-template-columns: 20% 20% 1fr auto;
+      grid-template-columns: 20% 1fr auto;
       grid-gap: 10px;
     }
     .task {
