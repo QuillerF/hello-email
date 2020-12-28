@@ -14,31 +14,31 @@
             <el-input v-model="ruleForm.name" placeholder="项目名称"></el-input>
           </div>
         </el-form-item>
-        <el-form-item label="任务分解" prop="predicts">
+
+        <el-form-item label="提测时间">
+          <div class="line-item">
+            <el-date-picker
+              type="datetime"
+              default-time="09:30:00"
+              placeholder="选择日期"
+              v-model="ruleForm.subTime"
+              style="width: 100%"
+            ></el-date-picker>
+          </div>
+        </el-form-item>
+        <el-form-item label="延期原因" prop="predicts">
           <div class="btn-item">
             <div>
               <div
-                v-for="(item, index) in ruleForm.predicts"
+                v-for="(item, index) in ruleForm.reasons"
                 :key="index + 1"
                 class="input-area"
                 style="margin-bottom: 10px"
               >
-                <div class="three-item">
+                <div class="btn-item">
                   <el-input
-                    v-model="item.name"
-                    placeholder="开发人姓名"
-                  ></el-input>
-                  <el-input
-                    v-model="item.time"
-                    placeholder="估时(h)"
-                  ></el-input>
-                  <el-input
-                    v-model="item.devUrl"
-                    placeholder="技术文档链接"
-                  ></el-input>
-                  <el-input
-                    v-model="item.timeUrl"
-                    placeholder="估时文档链接"
+                    v-model="item.content"
+                    placeholder="填写原因"
                   ></el-input>
                   <div class="btn-area center">
                     <el-button
@@ -47,14 +47,6 @@
                       icon="el-icon-minus"
                       @click="delPredictItem(index)"
                     ></el-button>
-                  </div>
-                  <div class="task">
-                    <el-input
-                      v-model="item.items"
-                      type="textarea"
-                      :rows="2"
-                      placeholder="请输入分解任务,多个任务以逗号分隔"
-                    ></el-input>
                   </div>
                 </div>
               </div>
@@ -69,45 +61,6 @@
             >
           </div>
         </el-form-item>
-        <el-form-item label="开发时间">
-          <div class="line-item">
-            <el-date-picker
-              type="datetimerange"
-              :default-time="['09:30:00', '18:30:00']"
-              :picker-options="pickOptions"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              unlink-panels
-              v-model="ruleForm.devDateRange"
-              style="width: 100%"
-            ></el-date-picker>
-          </div>
-        </el-form-item>
-        <el-form-item label="自测时间">
-          <div class="line-item">
-            <el-date-picker
-              type="datetimerange"
-              :picker-options="pickOptions"
-              :default-time="['09:30:00', '18:30:00']"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              v-model="ruleForm.testDate"
-              style="width: 100%"
-            ></el-date-picker>
-          </div>
-        </el-form-item>
-        <el-form-item label="提测时间">
-          <div class="line-item">
-            <el-date-picker
-              type="datetime"
-              default-time="09:30:00"
-              placeholder="选择日期"
-              v-model="ruleForm.deliveryDate"
-              style="width: 100%"
-            ></el-date-picker>
-          </div>
-        </el-form-item>
-
         <el-form-item>
           <el-button type="primary" @click="doCopy">复制showDoc代码</el-button>
           <el-button @click="resetForm">重置</el-button>
@@ -118,47 +71,23 @@
       <div class="area-title">内容预览区</div>
       <pre ref="pre">
 
-###技术文档:<span v-for="(item,index) in ruleForm.predicts" :key="index">
-{{item.name }}
-{{item.devUrl}}
-</span>
-###估时文档:<span v-for="(item,index) in ruleForm.predicts" :key="index">
-{{item.name }} {{item.time}}<span v-if="item.time">h</span>
-{{item.timeUrl}}
-</span>
 
-开发时间: {{ ruleForm.devDateRange&&ruleForm.devDateRange[0] | formatTime }} - {{ ruleForm.devDateRange&&ruleForm.devDateRange[1] | formatTime }}
+#### 延期交付申请
 
-联调自测: {{ ruleForm.testDate&&ruleForm.testDate[0] | formatTime }} - {{ ruleForm.testDate&&ruleForm.testDate[1] | formatTime }}
+##### 项目名称: {{ ruleForm.name }}
 
-###预计提测: {{ ruleForm.deliveryDate | formatTime }}
+##### 当前开发进度: {{ ruleForm.step }}
 
-```plantuml
-@startmindmap
-+ {{ ruleForm.name }}<span v-for="(item) in ruleForm.predicts" :key="item.id">
-++ {{item.name}}<span v-for="el in toArray(item.items)" :key="el" >
-+++ {{el}}</span>
-</span>
-@endmindmap
-```
+##### 申请PC端交付时间延期为:  {{ ruleForm.subTime | formatTime }}
 
-```plantuml
-@startgantt
-sunday are closed
-project starts the {{ ruleForm.devDateRange&&ruleForm.devDateRange[0] | formatDate }}
-scale 2
--- 进入开发 --
-[开发]  starts {{ ruleForm.devDateRange&&ruleForm.devDateRange[0] | formatDate }} and ends {{ ruleForm.devDateRange&&ruleForm.devDateRange[1] | formatDate }} and is 0% complete
-[联调自测]   starts {{ ruleForm.testDate&&ruleForm.testDate[0] | formatDate }} and ends {{ ruleForm.testDate&&ruleForm.testDate[1] | formatDate }} and is 0% complete
-[开发]->[联调自测]
-[提测] happens {{ ruleForm.deliveryDate | formatDate }}
--- 提测 --
-[提测]->[测试]
-[测试] starts {{ ruleForm.deliveryDate | formatDate }}
-[测试] lasts 2 days and is 0% complete
-today is colored in #AAF
-@endgantt
-```
+##### 申请原因：
+
+<div v-for="(item,index) in ruleForm.reasons" :key="index" >
+  {{ index+1 }}.{{item.content}}
+</div>
+
+
+
       </pre>
     </div>
   </div>
@@ -173,20 +102,13 @@ export default {
     return {
       ruleForm: {
         name: "",
-        devUrl: "",
-        predicts: [
+        step: "",
+        reasons: [
           {
-            name: "",
-            timeUrl: "",
-            devUrl: "",
-            time: "",
-            items: "",
+            content: "",
           },
         ],
-        devDateRange: [],
-        testDate: [],
-        waitDate: "",
-        deliveryDate: "",
+        subTime: "",
       },
       pickOptions: {
         shortcuts: [
@@ -287,11 +209,8 @@ export default {
       });
     },
     addPredictItem() {
-      this.ruleForm.predicts.push({
-        name: "",
-        url: "",
-        time: "",
-        items: "",
+      this.ruleForm.reasons.push({
+        content: "",
       });
     },
     toArray(value) {
@@ -299,8 +218,8 @@ export default {
       return value.split(",");
     },
     delPredictItem(index) {
-      if (this.ruleForm.predicts.length === 1) return;
-      this.ruleForm.predicts.splice(index, 1);
+      if (this.ruleForm.reasons.length === 1) return;
+      this.ruleForm.reasons.splice(index, 1);
     },
 
     resetForm() {

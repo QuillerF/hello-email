@@ -18,6 +18,10 @@
               <i class="el-icon-document"></i>
               <span slot="title">估时模板</span>
             </el-menu-item>
+            <el-menu-item index="predictSimple">
+              <i class="el-icon-document"></i>
+              <span slot="title">估时简版</span>
+            </el-menu-item>
             <el-menu-item index="submittest">
               <i class="el-icon-document"></i>
               <span slot="title">提测模板</span>
@@ -26,11 +30,23 @@
               <i class="el-icon-document"></i>
               <span slot="title">延期申请</span>
             </el-menu-item>
+            <el-menu-item index="leave">
+              <i class="el-icon-document"></i>
+              <span slot="title">请假模板</span>
+            </el-menu-item>
+            <el-menu-item index="rest">
+              <i class="el-icon-document"></i>
+              <span slot="title">调休模板</span>
+            </el-menu-item>
           </el-menu></el-aside
         >
         <el-main>
           <Predict v-if="index === 'predict'"></Predict>
+          <PredictSImple v-if="index === 'predictSimple'"></PredictSImple>
           <SubmitTest v-if="index === 'submittest'"></SubmitTest>
+          <Postpone v-if="index === 'postpone'"></Postpone>
+          <Leave v-if="index === 'leave'"></Leave>
+          <Rest v-if="index === 'rest'"></Rest>
         </el-main>
       </el-container>
     </el-container>
@@ -39,7 +55,11 @@
 
 <script>
 import Predict from "./Predict";
+import PredictSImple from "./PredictSImple";
 import SubmitTest from "./SubmitTest";
+import Postpone from "./Postpone";
+import Leave from "./Leave";
+import Rest from "./Rest";
 
 export default {
   name: "HelloWorld",
@@ -48,15 +68,20 @@ export default {
       index: "predict",
     };
   },
+  components: {
+    Predict,
+    SubmitTest,
+    PredictSImple,
+    Postpone,
+    Leave,
+    Rest,
+  },
   methods: {
     menuselect(val) {
       this.index = val;
     },
   },
-  components: {
-    Predict,
-    SubmitTest,
-  },
+
   props: {
     msg: String,
   },

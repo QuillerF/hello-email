@@ -48,14 +48,6 @@
                       @click="delPredictItem(index)"
                     ></el-button>
                   </div>
-                  <div class="task">
-                    <el-input
-                      v-model="item.items"
-                      type="textarea"
-                      :rows="2"
-                      placeholder="请输入分解任务,多个任务以逗号分隔"
-                    ></el-input>
-                  </div>
                 </div>
               </div>
             </div>
@@ -110,7 +102,7 @@
 
         <el-form-item>
           <el-button type="primary" @click="doCopy">复制showDoc代码</el-button>
-          <el-button @click="resetForm">重置</el-button>
+          <el-button type="primary" plain @click="resetForm">重置</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -133,32 +125,9 @@
 
 ###预计提测: {{ ruleForm.deliveryDate | formatTime }}
 
-```plantuml
-@startmindmap
-+ {{ ruleForm.name }}<span v-for="(item) in ruleForm.predicts" :key="item.id">
-++ {{item.name}}<span v-for="el in toArray(item.items)" :key="el" >
-+++ {{el}}</span>
-</span>
-@endmindmap
-```
 
-```plantuml
-@startgantt
-sunday are closed
-project starts the {{ ruleForm.devDateRange&&ruleForm.devDateRange[0] | formatDate }}
-scale 2
--- 进入开发 --
-[开发]  starts {{ ruleForm.devDateRange&&ruleForm.devDateRange[0] | formatDate }} and ends {{ ruleForm.devDateRange&&ruleForm.devDateRange[1] | formatDate }} and is 0% complete
-[联调自测]   starts {{ ruleForm.testDate&&ruleForm.testDate[0] | formatDate }} and ends {{ ruleForm.testDate&&ruleForm.testDate[1] | formatDate }} and is 0% complete
-[开发]->[联调自测]
-[提测] happens {{ ruleForm.deliveryDate | formatDate }}
--- 提测 --
-[提测]->[测试]
-[测试] starts {{ ruleForm.deliveryDate | formatDate }}
-[测试] lasts 2 days and is 0% complete
-today is colored in #AAF
-@endgantt
-```
+
+
       </pre>
     </div>
   </div>
