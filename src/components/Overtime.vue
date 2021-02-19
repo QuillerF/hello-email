@@ -9,24 +9,63 @@
         label-width="180px"
         class="demo-ruleForm"
       >
-        <el-form-item label="分工及影响功能" prop="predicts">
-          <div>
-            <div
-              v-for="(item, index) in ruleForm.predicts"
-              :key="index"
-              class="input-area"
-              style="margin-bottom: 10px"
+        <el-form-item label="申请人" prop="name">
+          <div class="line-item">
+            <el-input v-model="ruleForm.name" placeholder="输入名字"></el-input>
+          </div>
+        </el-form-item>
+        <el-form-item label="项目名称" prop="name">
+          <div class="line-item">
+            <el-input
+              v-model="ruleForm.itemName"
+              placeholder="输入项目名称"
+            ></el-input>
+          </div>
+        </el-form-item>
+        <el-form-item label="加班时间">
+          <div class="line-item">
+            <el-date-picker
+              v-model="daterange"
+              format="yyyy-MM-DD HH:mm"
+              type="datetimerange"
+              placeholder="选择日期"
+              style="width: 100%"
+              @change="daterangeChange"
+            ></el-date-picker>
+            <el-input-number
+              v-model="ruleForm.days"
+              label="天数"
+              :min="0.5"
+              :max="10"
+              :step="0.5"
+              :controls="true"
+              controls-position="both"
             >
-              <div class="three-item">
-                <el-input v-model="item.name" placeholder="姓名"></el-input>
-                <el-input v-model="item.items" placeholder="分工"></el-input>
-                <div class="btn-area center">
-                  <el-button
-                    type="danger"
-                    circle
-                    icon="el-icon-minus"
-                    @click="delPredictItem(index)"
-                  ></el-button>
+            </el-input-number>
+          </div>
+        </el-form-item>
+        <el-form-item label="加班原因" prop="predicts">
+          <div class="btn-item">
+            <div>
+              <div
+                v-for="(item, index) in ruleForm.reasons"
+                :key="index + 1"
+                class="input-area"
+                style="margin-bottom: 10px"
+              >
+                <div class="btn-item">
+                  <el-input
+                    v-model="item.content"
+                    placeholder="填写"
+                  ></el-input>
+                  <div class="btn-area center">
+                    <el-button
+                      type="danger"
+                      circle
+                      icon="el-icon-minus"
+                      @click="delPredictItem(index)"
+                    ></el-button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -40,20 +79,8 @@
             >
           </div>
         </el-form-item>
-        <el-form-item label="提测时间">
-          <div class="line-item">
-            <el-date-picker
-              type="datetime"
-              default-time="09:30:00"
-              placeholder="选择日期"
-              v-model="ruleForm.subTime"
-              style="width: 100%"
-            ></el-date-picker>
-          </div>
-        </el-form-item>
-
         <el-form-item>
-          <el-button type="primary" @click="doCopy">复制代码</el-button>
+          <el-button type="primary" @click="doCopy">复制showDoc代码</el-button>
           <el-button @click="resetForm">重置</el-button>
         </el-form-item>
       </el-form>
@@ -61,16 +88,20 @@
     <div class="area">
       <div class="area-title">内容预览区</div>
       <pre ref="pre">
-#### PC提测时间
+#### 尊敬的领导:
 
-#### {{ ruleForm.subTime | formatTime }}
+​    您好!
+​    我因为{{ ruleForm.itemName }}项目,需申请加班{{ ruleForm.days }}天.加班时间: {{ ruleForm.startTime | formatTime }} 到 {{ruleForm.endTime | formatTime}}
+​    望领导批准。
 
-#### 分工及影响功能
+##### 加班原因:
+<div v-for="(item,index) in ruleForm.reasons" :key="index" >
+  {{ index+1 }}.{{item.content}}
+</div>
 
-<span v-for="(item,index) in ruleForm.predicts" :key="index">
-{{item.name }}
-{{ item.items }}
-</span>
+​                                               申请人: {{ruleForm.name}}
+​                                               {{ruleForm.nowTime | formatDate}}
+
 
       </pre>
     </div>
@@ -86,76 +117,22 @@ export default {
     return {
       ruleForm: {
         name: "",
-        predicts: [
+        itemName: "",
+        reason: "",
+        type: "",
+        reasons: [
           {
-            name: "",
-            items: "",
+            content: "",
           },
         ],
-        subTime: "",
+        startTime: "",
+        endTime: "",
+        nowTime: dayjs().toDate(),
       },
-      pickOptions: {
-        shortcuts: [
-          {
-            text: "开始9:30",
-            onClick(vm) {
-              console.log(vm);
-              const [today = new Date(), nextday] = vm.value || [];
-              const newDay = dayjs(today)
-                .set("hour", 9)
-                .set("minute", 30)
-                .set("second", 0)
-                .toDate();
-              vm.value = [newDay, nextday];
-            },
-          },
-          {
-            text: "开始14:00",
-            onClick(vm) {
-              console.log(vm);
-              const [today = new Date(), nextday] = vm.value || [];
-              const newDay = dayjs(today)
-                .set("hour", 14)
-                .set("minute", 0)
-                .set("second", 0)
-                .toDate();
-              vm.value = [newDay, nextday];
-            },
-          },
-          {
-            text: "结束12:00",
-            onClick(vm) {
-              console.log(vm);
-              const [today, nextday = new Date()] = vm.value || [];
-              const newDay = dayjs(nextday)
-                .set("hour", 12)
-                .set("minute", 0)
-                .set("second", 0)
-                .toDate();
-              vm.value = [today, newDay];
-            },
-          },
-          {
-            text: "结束18:30",
-            onClick(vm) {
-              console.log(vm);
-              const [today, nextday = new Date()] = vm.value || [];
-              const newDay = dayjs(nextday)
-                .set("hour", 18)
-                .set("minute", 30)
-                .set("second", 0)
-                .toDate();
-              vm.value = [today, newDay];
-            },
-          },
-        ],
-      },
+      types: ["年假", "病假", "婚假", "产假"],
+      daterange: [],
       copyForm: {},
       message: "asdasdasd",
-      rules: {
-        name: [{ required: true, message: "请输入", trigger: "blur" }],
-        devUrl: [{ required: true, message: "请输入", trigger: "blur" }],
-      },
     };
   },
   created() {
@@ -171,7 +148,9 @@ export default {
       .set("minute", 30)
       .set("second", 0)
       .toDate();
-    this.ruleForm.devDateRange = [today, nextday];
+    this.daterange = [today, nextday];
+    this.ruleForm.startTime = today;
+    this.ruleForm.endTime = nextday;
   },
   computed: {},
   methods: {
@@ -193,11 +172,8 @@ export default {
       });
     },
     addPredictItem() {
-      this.ruleForm.predicts.push({
-        name: "",
-        url: "",
-        time: "",
-        items: "",
+      this.ruleForm.reasons.push({
+        content: "",
       });
     },
     toArray(value) {
@@ -205,8 +181,13 @@ export default {
       return value.split(",");
     },
     delPredictItem(index) {
-      if (this.ruleForm.predicts.length === 1) return;
-      this.ruleForm.predicts.splice(index, 1);
+      if (this.ruleForm.reasons.length === 1) return;
+      this.ruleForm.reasons.splice(index, 1);
+    },
+    daterangeChange(val = []) {
+      const [start, end] = val || [];
+      this.ruleForm.startTime = start;
+      this.ruleForm.endTime = end;
     },
 
     resetForm() {
@@ -289,14 +270,14 @@ $border: #d7bca4;
     }
     .three-item {
       display: grid;
-      grid-template-columns: 20% 1fr auto;
+      grid-template-columns: 100px 80px 1fr 1fr auto;
       grid-gap: 10px;
     }
     .task {
       display: grid;
       grid-template-columns: 1fr;
       grid-gap: 10px;
-      grid-column-start: span 3;
+      grid-column-start: span 4;
     }
     .btn-area {
       grid-row-start: span 2;

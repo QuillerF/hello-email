@@ -110,11 +110,11 @@
       <div class="area-title">内容预览区</div>
       <pre ref="pre">
 
-###技术文档:<span v-for="(item,index) in ruleForm.predicts" :key="index">
+### 技术文档:<span v-for="(item,index) in ruleForm.predicts" :key="index">
 {{item.name }}
 {{item.devUrl}}
 </span>
-###估时文档:<span v-for="(item,index) in ruleForm.predicts" :key="index">
+### 估时文档:<span v-for="(item,index) in ruleForm.predicts" :key="index">
 {{item.name }} {{item.time}}<span v-if="item.time">h</span>
 {{item.timeUrl}}
 </span>
@@ -123,7 +123,7 @@
 
 联调自测: {{ ruleForm.testDate&&ruleForm.testDate[0] | formatTime }} - {{ ruleForm.testDate&&ruleForm.testDate[1] | formatTime }}
 
-###预计提测: {{ ruleForm.deliveryDate | formatTime }}
+### 预计提测: {{ ruleForm.deliveryDate | formatTime }}
 
 
 

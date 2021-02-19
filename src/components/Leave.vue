@@ -9,24 +9,56 @@
         label-width="180px"
         class="demo-ruleForm"
       >
-        <el-form-item label="项目名称" prop="name">
+        <el-form-item label="请假人" prop="name">
           <div class="line-item">
-            <el-input v-model="ruleForm.name" placeholder="项目名称"></el-input>
+            <el-input v-model="ruleForm.name" placeholder="输入名字"></el-input>
+          </div>
+        </el-form-item>
+        <el-form-item label="请假原因" prop="name">
+          <div class="line-item">
+            <el-input
+              v-model="ruleForm.reason"
+              placeholder="输入具体原因"
+            ></el-input>
+          </div>
+        </el-form-item>
+        <el-form-item label="请假类型" prop="name">
+          <div class="line-item">
+            <el-select v-model="ruleForm.type" clearable>
+              <el-option
+                v-for="item in types"
+                :key="item"
+                :label="item"
+                :value="item"
+              >
+              </el-option>
+            </el-select>
           </div>
         </el-form-item>
 
-        <el-form-item label="提测时间">
+        <el-form-item label="请假时间">
           <div class="line-item">
             <el-date-picker
-              type="datetime"
-              default-time="09:30:00"
+              v-model="daterange"
+              format="yyyy-MM-DD HH:mm"
+              type="datetimerange"
               placeholder="选择日期"
-              v-model="ruleForm.subTime"
               style="width: 100%"
+              @change="daterangeChange"
             ></el-date-picker>
+            <el-input-number
+              v-model="ruleForm.days"
+              label="天数"
+              :min="0.5"
+              :max="10"
+              :step="0.5"
+              :controls="true"
+              controls-position="both"
+            >
+            </el-input-number>
           </div>
         </el-form-item>
-        <el-form-item label="延期原因" prop="predicts">
+        <el-form-item label="工作交接" prop="predicts">
           <div class="btn-item">
             <div>
               <div
@@ -38,7 +70,7 @@
                 <div class="btn-item">
                   <el-input
                     v-model="item.content"
-                    placeholder="填写原因"
+                    placeholder="填写工作交接"
                   ></el-input>
                   <div class="btn-area center">
                     <el-button
@@ -72,20 +104,19 @@
       <pre ref="pre">
 
 
-#### 延期交付申请
+#### 尊敬的领导:
 
-##### 项目名称: {{ ruleForm.name }}
+​    您好!
+​    我因为{{ ruleForm.reason }},需请{{ ruleForm.type }}{{ ruleForm.days }}天.请假时间: {{ ruleForm.startTime | formatTime }} 到 {{ruleForm.endTime | formatTime}}
+​    望领导批准。
 
-##### 当前开发进度: {{ ruleForm.step }}
-
-##### 申请PC端交付时间延期为:  {{ ruleForm.subTime | formatTime }}
-
-##### 申请原因：
-
+##### 工作交接:
 <div v-for="(item,index) in ruleForm.reasons" :key="index" >
   {{ index+1 }}.{{item.content}}
 </div>
 
+​                                               请假人: {{ruleForm.name}}
+​                                               {{ruleForm.nowTime | formatDate}}
 
 
       </pre>
@@ -102,76 +133,21 @@ export default {
     return {
       ruleForm: {
         name: "",
-        step: "",
+        reason: "",
+        type: "",
         reasons: [
           {
             content: "",
           },
         ],
-        subTime: "",
+        startTime: "",
+        endTime: "",
+        nowTime: dayjs().toDate(),
       },
-      pickOptions: {
-        shortcuts: [
-          {
-            text: "开始9:30",
-            onClick(vm) {
-              console.log(vm);
-              const [today = new Date(), nextday] = vm.value || [];
-              const newDay = dayjs(today)
-                .set("hour", 9)
-                .set("minute", 30)
-                .set("second", 0)
-                .toDate();
-              vm.value = [newDay, nextday];
-            },
-          },
-          {
-            text: "开始14:00",
-            onClick(vm) {
-              console.log(vm);
-              const [today = new Date(), nextday] = vm.value || [];
-              const newDay = dayjs(today)
-                .set("hour", 14)
-                .set("minute", 0)
-                .set("second", 0)
-                .toDate();
-              vm.value = [newDay, nextday];
-            },
-          },
-          {
-            text: "结束12:00",
-            onClick(vm) {
-              console.log(vm);
-              const [today, nextday = new Date()] = vm.value || [];
-              const newDay = dayjs(nextday)
-                .set("hour", 12)
-                .set("minute", 0)
-                .set("second", 0)
-                .toDate();
-              vm.value = [today, newDay];
-            },
-          },
-          {
-            text: "结束18:30",
-            onClick(vm) {
-              console.log(vm);
-              const [today, nextday = new Date()] = vm.value || [];
-              const newDay = dayjs(nextday)
-                .set("hour", 18)
-                .set("minute", 30)
-                .set("second", 0)
-                .toDate();
-              vm.value = [today, newDay];
-            },
-          },
-        ],
-      },
+      types: ["年假", "病假", "婚假", "产假", "调休"],
+      daterange: [],
       copyForm: {},
       message: "asdasdasd",
-      rules: {
-        name: [{ required: true, message: "请输入", trigger: "blur" }],
-        devUrl: [{ required: true, message: "请输入", trigger: "blur" }],
-      },
     };
   },
   created() {
@@ -187,7 +163,9 @@ export default {
       .set("minute", 30)
       .set("second", 0)
       .toDate();
-    this.ruleForm.devDateRange = [today, nextday];
+    this.daterange = [today, nextday];
+    this.ruleForm.startTime = today;
+    this.ruleForm.endTime = nextday;
   },
   computed: {},
   methods: {
@@ -220,6 +198,11 @@ export default {
     delPredictItem(index) {
       if (this.ruleForm.reasons.length === 1) return;
       this.ruleForm.reasons.splice(index, 1);
+    },
+    daterangeChange(val = []) {
+      const [start, end] = val || [];
+      this.ruleForm.startTime = start;
+      this.ruleForm.endTime = end;
     },
 
     resetForm() {

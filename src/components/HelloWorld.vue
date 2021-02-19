@@ -34,9 +34,9 @@
               <i class="el-icon-document"></i>
               <span slot="title">请假模板</span>
             </el-menu-item>
-            <el-menu-item index="rest">
+            <el-menu-item index="overtime">
               <i class="el-icon-document"></i>
-              <span slot="title">调休模板</span>
+              <span slot="title">加班申请</span>
             </el-menu-item>
           </el-menu></el-aside
         >
@@ -46,7 +46,7 @@
           <SubmitTest v-if="index === 'submittest'"></SubmitTest>
           <Postpone v-if="index === 'postpone'"></Postpone>
           <Leave v-if="index === 'leave'"></Leave>
-          <Rest v-if="index === 'rest'"></Rest>
+          <Overtime v-if="index === 'overtime'"></Overtime>
         </el-main>
       </el-container>
     </el-container>
@@ -59,7 +59,7 @@ import PredictSImple from "./PredictSImple";
 import SubmitTest from "./SubmitTest";
 import Postpone from "./Postpone";
 import Leave from "./Leave";
-import Rest from "./Rest";
+import Overtime from "./Overtime";
 
 export default {
   name: "HelloWorld",
@@ -74,7 +74,7 @@ export default {
     PredictSImple,
     Postpone,
     Leave,
-    Rest,
+    Overtime,
   },
   methods: {
     menuselect(val) {
